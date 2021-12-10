@@ -1,3 +1,4 @@
 # Environment variables to run before opening acme
-PAGER=page
-EDITOR=editinacme
+setenv PAGER page
+setenv EDITOR editinacme
+setenv NO_COLOR true

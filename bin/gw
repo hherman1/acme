@@ -1,0 +1,2 @@
+#!/bin/sh
+./gradlew "$@" 2>&1 | page
