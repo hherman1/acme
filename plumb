@@ -1,0 +1,14 @@
+# existing files in a git diff, possibly tagged by line number, go to editor
+type is text
+data matches '(a|b)/([.a-zA-Z¡-￿0-9_/\-@]*[a-zA-Z¡-￿0-9_/\-])('$addr')?'
+arg isfile	$2
+data set	$file
+attr add	addr=$4
+plumb to edit
+plumb client $editor
+
+# Commit hashes
+type is text
+data matches 'commit ([a-f0-9]+)'
+plumb start page -wdir $wdir git show $1
+
