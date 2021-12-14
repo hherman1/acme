@@ -1,0 +1,3 @@
+#!/bin/sh
+set -e
+src search "$@" 2>&1 | grep -v 'still cloning' | grep -v '\) missing:' | page
