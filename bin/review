@@ -1,2 +1,5 @@
 #!/bin/sh
+if [ -n "$2" ]; then
+	cd "$2"
+fi
 gh pr diff --color never $1 | page
