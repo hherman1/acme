@@ -1,0 +1,3 @@
+#!/bin/sh
+# Echos all of the given arguments into a page
+echo "$@" | page
