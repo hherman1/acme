@@ -1,0 +1,10 @@
+#!/bin/sh
+set -e
+NOTE_DIR=$HOME/.config/notes/
+mkdir -p $NOTE_DIR
+if [ "$#" -eq 0 ]; then
+    find $NOTE_DIR -type f
+    exit 0;
+fi
+touch $NOTE_DIR/$1
+$EDITOR $NOTE_DIR/$1 &
