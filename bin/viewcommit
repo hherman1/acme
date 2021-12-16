@@ -1,5 +1,4 @@
 #!/bin/sh
 # Opens the corresponding commit in an acme page
 cd $1
-echo $0 $1 $2 | page
 git show $2 | page
