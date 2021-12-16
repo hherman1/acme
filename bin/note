@@ -1,6 +1,6 @@
 #!/bin/sh
 set -e
-NOTE_DIR=$HOME/.config/notes/
+NOTE_DIR=$HOME/.config/notes
 mkdir -p $NOTE_DIR
 if [ "$#" -eq 0 ]; then
     find $NOTE_DIR -type f
