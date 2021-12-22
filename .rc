@@ -2,4 +2,4 @@
 setenv PAGER page
 setenv EDITOR editinacme
 setenv NO_COLOR true
-setenv mousescrollsize 3
+setenv mousescrollsize 5
