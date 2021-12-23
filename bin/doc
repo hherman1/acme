@@ -3,6 +3,7 @@
 if [ -n "$2" ]; then
 	cd $2
 fi
+
 PKG=$(echo $1 | sed -E  "s/^([a-zA-Z]+).*$/\1/")
 STRUCT=$(echo $1 | sed -n -E "s/$PKG\.([a-zA-Z]+).*$/\1/p")
 if [ -n "$STRUCT" ]; then

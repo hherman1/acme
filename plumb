@@ -52,4 +52,10 @@ type is text
 data matches ' *func ([a-z]+)\.([A-Za-z]+).*'
 plumb start doc $1.$2 $wdir
 
-# must have a closing newline or breaks plumber
+# go doc for imports
+# eg: 	"context"
+type is text
+data matches '^	"([a-z./\-A-Z]+)"$'
+plumb start doc $1 $wdir
+
+#must have trailing new line or fails
