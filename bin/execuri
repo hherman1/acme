@@ -1,4 +1,5 @@
 #!/bin/sh
-# Executes a uri of the form `exec://command/arg1/arg2/...`
+# Executes a uri of the form `exec://command/arg1/arg2/...` in the given working directory
+cd $2
 cmd=$(echo $1 | sed 's/exec:\/\///' | sed 's/\// /g') 
 eval $cmd | page
