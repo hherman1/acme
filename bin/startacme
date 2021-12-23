@@ -1,3 +1,4 @@
 #!/bin/sh
+acme -f /mnt/font/'Helvetica'/18a/font &
+sleep 5
 acmego &
-acme -f /mnt/font/'Helvetica'/18a/font
