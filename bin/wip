@@ -1,0 +1,2 @@
+#!/bin/sh
+git wip | sed 's/	\(.*\)$/	checkout \1/'
