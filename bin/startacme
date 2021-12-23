@@ -1,0 +1,3 @@
+#!/bin/sh
+acmego &
+acme -f /mnt/font/'Helvetica'/18a/font
