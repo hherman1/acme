@@ -1,3 +1,5 @@
+# autoexec on save: Watch 'cat /usr/local/plan9/plumb/initial.plumbing | 9p write plumb/rules && 9p read plumb/rules'
+
 # existing files in a git diff, possibly tagged by line number, go to editor
 type is text
 data matches '(a|b)/([.a-zA-Z¡-￿0-9_/\-@]*[a-zA-Z¡-￿0-9_/\-])('$addr')?'
@@ -21,3 +23,22 @@ plumb start review $1 $wdir
 type is text
 data matches '(exec://[a-zA-Z0-9/]+)'
 plumb start execuri $1 $wdir
+
+# go doc for types
+type is text
+data matches 'type ([a-zA-Z]+)\.([a-zA-Z]+).*'
+plumb start doc $1.$2 $wdir
+
+# go doc for methods
+# eg: func (c *sync.Cond) Broadcast()
+type is text
+data matches 'func \([a-zA-Z]+ \*?([a-z]+)\.([A-Za-z]+)\) ([a-zA-Z]+).*'
+plumb start doc $1.$2.$3 $wdir
+
+# go doc for packages
+# eg: package sync // import "sync"
+type is text
+data matches 'package ([a-z]+).*'
+plumb start doc $1 $wdir
+
+# must have a closing newline or breaks plumber
