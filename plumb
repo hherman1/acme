@@ -41,4 +41,10 @@ type is text
 data matches 'package ([a-z]+).*'
 plumb start doc $1 $wdir
 
+# go doc for functions
+# eg: func strings.Compare(a, b string) int
+type is text
+data matches 'func ([a-z]+)\.([A-Za-z]+).*'
+plumb start doc $1.$2 $wdir
+
 # must have a closing newline or breaks plumber

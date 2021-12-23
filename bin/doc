@@ -8,5 +8,5 @@ STRUCT=$(echo $1 | sed -n -E "s/$PKG\.([a-zA-Z]+).*$/\1/p")
 if [ -n "$STRUCT" ]; then
 	go doc $1 | sed -E "s/$STRUCT/$PKG.$STRUCT/" | page
 else
-	go doc $1 | sed -E "s/type ([a-zA-Z]+)/type $PKG.\1/" | page
+	go doc $1 | sed -E "s/(type|func) ([a-zA-Z]+)/\1 $PKG.\2/" | page
 fi
