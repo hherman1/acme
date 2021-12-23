@@ -21,5 +21,3 @@ plumb start review $1 $wdir
 type is text
 data matches '(exec://[a-zA-Z0-9/]+)'
 plumb start execuri $1 $wdir
-#data matches '(exec://[a-zA-Z0-9/]+)'
-#plumb start execuri $1 $wdir
