@@ -19,6 +19,11 @@ type is text
 data matches '(http.*github.*pull/[0-9]+)'
 plumb start review $1 $wdir
 
+# Pull requests shrot notation
+type is text
+data matches '(#[0-9]+)'
+plumb start review $1 $wdir
+
 #exec URIs
 type is text
 data matches '(exec://[a-zA-Z0-9/]+)'
