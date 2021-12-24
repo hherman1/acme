@@ -29,33 +29,38 @@ type is text
 data matches '(exec://[a-zA-Z0-9/]+)'
 plumb start execuri $1 $wdir
 
+#Valid characters for a package
+package='[a-z./\-A-Z]+'
+
 # go doc for types
 type is text
 data matches 'type ([a-zA-Z]+)\.([a-zA-Z]+).*'
-plumb start doc $1.$2 $wdir
+plumb start inpage $wdir doc $1.$2
 
 # go doc for methods
 # eg: func (c *sync.Cond) Broadcast()
 type is text
-data matches 'func \([a-zA-Z]+ \*?([a-z]+)\.([A-Za-z]+)\) ([a-zA-Z]+).*'
-plumb start doc $1.$2.$3 $wdir
+data matches 'func \([a-zA-Z]+ \*?('$package')\.([A-Za-z]+)\) ([a-zA-Z]+).*'
+plumb start inpage $wdir doc $1.$2.$3
 
 # go doc for packages
 # eg: package sync // import "sync"
 type is text
 data matches 'package ([a-z]+).*'
-plumb start doc $1 $wdir
+plumb start inpage $wdir doc $1
 
 # go doc for functions
 # eg: func strings.Compare(a, b string) int
 type is text
-data matches ' *func ([a-z]+)\.([A-Za-z]+).*'
-plumb start doc $1.$2 $wdir
+data matches ' *func ('$package')\.([A-Za-z]+).*'
+plumb start inpage $wdir doc $1.$2
 
 # go doc for imports
 # eg: 	"context"
 type is text
-data matches '^	"([a-z./\-A-Z]+)"$'
-plumb start doc $1 $wdir
+data matches '^	"('$package')"$'
+plumb start inpage $wdir doc $1
+#func github.com/carlmjohnson/requests.ToFile(name string) ResponseHandler
+
 
 #must have trailing new line or fails

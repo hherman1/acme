@@ -1,0 +1,4 @@
+#!/bin/sh
+# runs the given command but pipes output to page
+cd $1
+"${@:2}" | page
