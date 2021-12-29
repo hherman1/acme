@@ -39,13 +39,17 @@ func run() error {
 	switch {
 	case method !="":
 		// no replacements needed on method docs
-		fmt.Println(out)
+		fmt.Println(out.String())
 	case strukt != "":
 		// we looked up a struct, not a method, so we will need to replace strukt name ferences with qualified references so they can remain
 		// interactive
 		fmt.Println(strings.ReplaceAll(out.String(), strukt, fmt.Sprintf("%v.%v", pkg, strukt)))
 	default:
 		// Just a package. We need to prefix function and struct names with the package name so they can be clicked through.
+		// Shorten the package name to whatever go doc calls it
+		start := out.String()[len("package "):]
+		end := strings.Index(start, " //")
+		pkg = start[:end]
 		pattern := regexp.MustCompile("(type|func) ([a-zA-Z]+)")
 		fmt.Println(pattern.ReplaceAllString(out.String(), fmt.Sprintf("$1 %v.$2", pkg)))
 	}

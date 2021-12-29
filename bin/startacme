@@ -1,5 +1,5 @@
 #!/bin/sh
 mkdir -p /tmp/ns.hherman.:0/
-acme -f /mnt/font/'Helvetica'/18a/font &
+acme -f /mnt/font/'Helvetica'/18a/font -a &
 sleep 5
 acmego &
