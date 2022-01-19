@@ -1,5 +1,5 @@
 # acme
-config for my acme environment
+config for my acme environment. some commands use `github.com/hherman1/acmectl`
 
 [Acme Go Port](https://github.com/9fans/go)
 
