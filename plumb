@@ -30,7 +30,7 @@ data matches '(exec://[a-zA-Z0-9/]+)'
 plumb start execuri $1 $wdir
 
 #Valid characters for a package
-package='[a-z./\-A-Z]+'
+package='[a-z./\-A-Z0-9]+'
 
 # go doc for types
 type is text

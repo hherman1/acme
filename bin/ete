@@ -1,0 +1,2 @@
+#!/bin/sh
+coder ssh ete 'cd ~/git/geotime-history; git commit -am "ete";' "$@" 2>&1 | page

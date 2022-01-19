@@ -1,0 +1,2 @@
+#!/bin/sh
+xargs -0 printf '%b\n'

@@ -4,4 +4,4 @@ if [ "$#" -eq 0 ]; then
     xargs rg --color=never --no-heading -n
     exit 0;
 fi
-rg --color=never --no-heading "$@" -n
+rg --color=never --no-heading -n "$@"

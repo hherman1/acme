@@ -1,3 +1,2 @@
 #!/bin/sh
-l -trd /Volumes/git/* | sed 's/^/cd /'
-l -trd $HOME/Code/Personal/* | sed 's/^/cd /'
+l -trd /Volumes/git/* $HOME/Code/Personal/* | sed 's/^/cd /'
