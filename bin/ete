@@ -1,2 +1,3 @@
 #!/bin/sh
-coder ssh ete 'cd ~/git/geotime-history; git commit -am "ete";' "$@" 2>&1 | page
+REPO=$(basename $(acmectl read $winid tag | sed 's/ .*//' | sed 's/\/$//' ))
+coder ssh ete 'cd ~/git/'$REPO'; git commit -am "ete";' "$@" 2>&1 | page

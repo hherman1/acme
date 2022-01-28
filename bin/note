@@ -3,8 +3,15 @@ set -e
 NOTE_DIR=$HOME/.config/notes
 mkdir -p $NOTE_DIR
 if [ "$#" -eq 0 ]; then
-    find $NOTE_DIR -type f
+    find $NOTE_DIR -type f | grep -v '\.git' | sed 's/^/inpage . cat /'
     exit 0;
+fi
+if [ $1 = "sync" ]; then
+	cd $NOTE_DIR;
+	add -A;
+	commit -m 'sync';
+	pu;
+	exit 0;
 fi
 touch $NOTE_DIR/$1
 $EDITOR $NOTE_DIR/$1 &

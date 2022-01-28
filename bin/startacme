@@ -1,4 +1,5 @@
 #!/bin/sh
+plumber &
 mkdir -p /tmp/ns.hherman.:0/
 acme -f /mnt/font/'Helvetica'/16a/font -a &
 sleep 5
