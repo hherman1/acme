@@ -3,6 +3,7 @@ set -e
 NOTE_DIR=$HOME/.config/notes
 mkdir -p $NOTE_DIR
 if [ "$#" -eq 0 ]; then
+    echo note sync
     find $NOTE_DIR -type f | grep -v '\.git' | sed 's/^/inpage . cat /'
     exit 0;
 fi
