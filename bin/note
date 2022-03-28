@@ -14,5 +14,4 @@ if [ $1 = "sync" ]; then
 	pu;
 	exit 0;
 fi
-touch $NOTE_DIR/$1
-$EDITOR $NOTE_DIR/$1 &
+echo $NOTE_DIR/$1

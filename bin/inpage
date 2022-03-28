@@ -5,7 +5,7 @@
 
 ID=$(acmectl new)
 WD=$(pwd)"/"
-acmectl ctl $ID name $WD
+acmectl ctl $ID name $WD+inpage
 acmectl ctl $ID nomenu
 printf Kill | acmectl write $ID tag
 
@@ -17,7 +17,7 @@ mkfifo $FIFO
 EXE_PID=$!
 acmectl write $ID data < $FIFO &
 WRITE_PID=$!
-acmectl onexec $ID Kill "kill -9 $EXE_PID" &
+acmectl onexec $ID Kill "pkill -TERM -P $EXE_PID" &
 CTL_PID=$!
 wait $EXE_PID $WRITE_PID
 
