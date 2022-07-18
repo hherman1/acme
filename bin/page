@@ -1,7 +1,8 @@
 #!/bin/sh
 ID=$(acmectl new)
 WD=$(pwd)"/"
-acmectl ctl $ID name $WD
+printf Undo | acmectl write $ID tag
+acmectl ctl $ID name $WD+page
 acmectl ctl $ID nomenu
 acmectl write $ID data # copies from stdin
 # cleanup now that paging is complete

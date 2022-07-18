@@ -1,6 +1,20 @@
 #!/bin/bash
 
-inpage . cat $(note git)
+shownote () {
+	NPATH=$(note $1)
+	ID=$(acmectl new)
+	WD=$(pwd)"/"
+	acmectl ctl $ID name $WD+$1
+	acmectl ctl $ID nomenu
+	cat $NPATH | acmectl write $ID data
+	# cleanup now that paging is complete
+	acmectl ctl $ID clean
+	printf 0,0 | acmectl write $ID addr
+	acmectl ctl $ID dot=addr
+	acmectl ctl $ID show
+}
+
+shownote git
 if [ "$#" -eq 1 ]; then
-	inpage . cat $(note $1)
+	shownote $1
 fi

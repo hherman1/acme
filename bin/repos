@@ -1,2 +1,6 @@
 #!/bin/sh
-l -trd /Volumes/git/* $HOME/Code/Personal/* | sed 's/^/cd /'
+if [ "$#" -eq 0 ]; then
+	l -trd /Volumes/git/* $HOME/Code/Personal/*
+	exit 0
+fi
+l -trd /Volumes/git/* $HOME/Code/Personal/* | grep $1

@@ -1,0 +1,3 @@
+#!/bin/sh
+set -e
+editinacme $HOME/.config/todo

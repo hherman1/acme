@@ -1,2 +1,2 @@
 #!/bin/sh
-git push -u origin HEAD $@ 2>&1 | page
+git push -u origin HEAD $@ 2>&1
