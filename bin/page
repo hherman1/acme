@@ -2,6 +2,10 @@
 ID=$(acmectl new)
 WD=$(pwd)"/"
 printf Undo | acmectl write $ID tag
+if [ "$#" -ne 0 ]
+then
+	printf " $*" | acmectl write $ID tag
+fi
 acmectl ctl $ID name $WD+page
 acmectl ctl $ID nomenu
 acmectl write $ID data # copies from stdin
