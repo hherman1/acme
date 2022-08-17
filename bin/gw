@@ -1,3 +1,5 @@
 #!/bin/sh
 # we fix the output so line numbers are clickable
+ARGS="$@"
 ./gradlew "$@" 2>&1 | sed -l 's/: line /:/'  | page
+osascript -e "display notification \"test\" with title \"$?: gw $ARGS\""
