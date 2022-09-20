@@ -6,6 +6,7 @@ shownote () {
 	WD=$(pwd)"/"
 	acmectl ctl $ID name $WD+$1
 	acmectl ctl $ID nomenu
+	printf Delete | acmectl write $ID tag
 	cat $NPATH | acmectl write $ID data
 	# cleanup now that paging is complete
 	acmectl ctl $ID clean

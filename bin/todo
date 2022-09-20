@@ -1,3 +1,6 @@
 #!/bin/sh
 set -e
-editinacme $HOME/.config/todo
+WINID=$(acmectl new)
+acmectl ctl $WINID name $HOME/.config/notes/todo
+acmectl ctl $WINID get
+printf "|t+ |t- 'note sync'" | acmectl write $WINID tag
