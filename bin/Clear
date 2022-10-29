@@ -1,0 +1,2 @@
+#!/bin/sh
+9p read acme/index | grep -v '\+P' | awk '{print $1}' | xargs -L1 -P 8 -I %s -- acmectl ctl %s delete
