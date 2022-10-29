@@ -1,6 +1,6 @@
 #!/bin/sh
 set -e
-WINID=$(acmectl new)
-acmectl ctl $WINID name $HOME/.config/notes/todo
-acmectl ctl $WINID get
-printf "|t+ |t- 'note sync'" | acmectl write $WINID tag
+plumb $HOME/.config/notes/todo
+WINID=$(9p read acme/index | grep '/.config/notes/todo Del Snarf' | awk '{print $1}')
+acmectl ctl $WINID cleartag
+printf "+P |t+ |t- 'note sync'" | acmectl write $WINID tag
