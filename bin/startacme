@@ -5,3 +5,4 @@ plumber &
 acme -f /mnt/font/'Helvetica'/16a/font -a &
 sleep 5
 acmego -f &
+Suggestions &

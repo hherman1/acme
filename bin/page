@@ -8,6 +8,7 @@ then
 fi
 acmectl ctl $ID name $WD+page
 acmectl ctl $ID nomenu
+acmectl ctl $ID dirty # indicates that stdin hasn't been fully read yet
 acmectl write $ID data # copies from stdin
 # cleanup now that paging is complete
 acmectl ctl $ID clean
