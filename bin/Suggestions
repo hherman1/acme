@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 pidlock $$ suggestions
-9p read acme/log | grep '[0-9]+ new' | while read line
+9p read acme/log | grep '[0-9]+ new' |  while read line
 do
 	NWIN=$(echo $line | awk '{print $1}')
 	if echo "$line" | grep -q '.git/rebase-merge/git-rebase-todo$'; then
@@ -16,4 +16,5 @@ do
 done
 #echo 67 new /Volumes/git/project-burro/.git/rebase-merge/git-rebase-todo | awk '{print $1}'
 
-# ps | grep 'Suggestions$' | awk '{print $1}' | xargs kill
+# ps | grep 'Suggestions$' | awk '{print $1}' | xargs kill -9
+# ps | grep kill | grep ps| awk '{print $1}' | xargs kill -9

@@ -3,6 +3,8 @@ export NAMESPACE=/tmp/ns.hherman.:0/
 mkdir -p $NAMESPACE
 plumber &
 acme -f /mnt/font/'Helvetica'/16a/font -a &
+#cd /Volumes/git/acme-go
+#go run ./cmd/acme/ -f /mnt/font/'Helvetica'/16a/font -a &
 sleep 5
 acmego -f &
 Suggestions &
