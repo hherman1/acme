@@ -1,0 +1,16 @@
+#!/bin/sh
+SRC=$(readlink -f $1)
+DST=/tmp/gorun/$(md5sum $SRC | awk '{print $1}').go
+D=$(pwd)
+mkdir -p /tmp/gorun
+cd /tmp/gorun
+if [ ! -f /tmp/gorun/go.mod ]
+then
+	go mod init void
+fi
+if [ ! -f $DST ]
+then
+	cat $SRC | grep -v 'env gorun' > $DST
+fi
+cd $D
+go run $DST

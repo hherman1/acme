@@ -1,0 +1,5 @@
+#!/bin/sh
+#9p read acme/index | grep -v '\+P' | awk '{print $1}' | xargs -L1 -P 8 -I %s -- acmectl ctl %s delete
+if 9p read "acme/acme/$winid/tag" | grep -q -v '\+P'; then
+	printf ' +P' | 9p write "acme/acme/$winid/tag"
+fi
