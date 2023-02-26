@@ -4,14 +4,16 @@ pidlock $$ suggestions
 9p read acme/log | grep '[0-9]+ new' |  while read line
 do
 	NWIN=$(echo $line | awk '{print $1}')
+	# All windows are pinnable
+	printf 'Git Pin ' | 9p write "acme/acme/$NWIN/tag"
 	if echo "$line" | grep -q '.git/rebase-merge/git-rebase-todo$'; then
-		printf 'Edit s/pick/d/g' | 9p write "acme/acme/$NWIN/tag"
+		printf ' Edit s/pick/d/g' | 9p write "acme/acme/$NWIN/tag"
 	fi
 	if echo "$line" | grep -q '.java$'; then
-		printf '|t+ |t-' | 9p write "acme/acme/$NWIN/tag"
+		printf ' |t+ |t-' | 9p write "acme/acme/$NWIN/tag"
 	fi
 	if echo "$line" | grep -q '.go$'; then
-		printf '|t+ |t- "Watch go test .\"' | 9p write "acme/acme/$NWIN/tag"
+		printf ' |t+ |t- "Watch go test .\"' | 9p write "acme/acme/$NWIN/tag"
 	fi
 done
 #echo 67 new /Volumes/git/project-burro/.git/rebase-merge/git-rebase-todo | awk '{print $1}'
