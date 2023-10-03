@@ -3,4 +3,4 @@ set -e
 plumb /Volumes/git/notes/todo
 WINID=$(9p read acme/index | grep '/Volumes/git/notes/todo Del Snarf' | awk '{print $1}')
 acmectl ctl $WINID cleartag
-printf "+P |t+ |t- 'note sync' Clear" | acmectl write $WINID tag
+printf " +P |t+ |t- 'note sync' Clear" | acmectl write $WINID tag

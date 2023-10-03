@@ -1,0 +1,2 @@
+#!/bin/sh
+docker ps -q | xargs -I {} docker logs {} 2>&1

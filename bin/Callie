@@ -1,0 +1,13 @@
+#!/bin/sh
+#9p read acme/index | grep -v '\+P' | awk '{print $1}' | xargs -L1 -P 8 -I %s -- acmectl ctl %s delete
+ID=$(acmectl new)
+WD=$(pwd)"/"
+acmectl ctl $ID name $WD+callie
+acmectl ctl $ID nomenu
+printf Delete | acmectl write $ID tag
+printf 'stfu loser' | acmectl write $ID data
+# cleanup now that paging is complete
+acmectl ctl $ID clean
+printf 0,0 | acmectl write $ID addr
+acmectl ctl $ID dot=addr
+acmectl ctl $ID show

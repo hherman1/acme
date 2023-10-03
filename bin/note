@@ -1,6 +1,7 @@
 #!/bin/bash
 if [ "$1" = "sync" ]; then
 	cd /Volumes/git/notes;
+	add -A
 	git commit -am fix;
 	git push -u origin HEAD 2>&1
 	exit 0;
