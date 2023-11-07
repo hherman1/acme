@@ -1,0 +1,19 @@
+#!/bin/bash
+set -e
+
+MODDIR=$(dirname $(go env -json | jq -r '.GOMOD'))
+FUNC="$@"
+if [ $# -eq 0 ]; then
+    FUNC=$(cat) # stdin
+fi
+g "$FUNC" $MODDIR | grep :func > /tmp/func
+
+if [ "$(wc -l /tmp/func | awk '{print $1}')" -eq 1 ]; then
+	plumb $(sed 's/:func.*$//' /tmp/func)
+else
+	cat /tmp/func
+fi
+
+
+# example
+# /Users/hherman/git/machine-manager/apps/scheduler/pkg/machineops/machineops.go:169:func MarkMachinesForReprovisioning(

@@ -1,8 +1,7 @@
 #!/bin/bash
 # runs the given command but pipes output to page
-#cd $1
+cd $1
 #"${@:2}" 2>&1 | page
-
 ID=$(acmectl new)
 WD=$(pwd)"/"
 acmectl ctl $ID name $WD+inpage

@@ -1,0 +1,22 @@
+#!/bin/bash
+
+MODDIR=$(dirname $(go env -json | jq -r '.GOMOD'))
+QRY="$@"
+if [ $# -eq 0 ]; then
+    QRY=$(cat) # stdin
+fi
+
+g "^type $QRY " $MODDIR > /tmp/qry
+g "$QRY" $MODDIR | grep :func | grep -v "Test_*$QRY" >> /tmp/qry # funcs
+g '^\s\s*'$QRY'\s\s*=' $MODDIR >> /tmp/qry # consts
+g '^\t\t*'$QRY'\s\s*' $MODDIR >> /tmp/qry # fields
+
+if [ "$(wc -l /tmp/qry | awk '{print $1}')" -eq 1 ]; then
+	plumb $(sed 's/\(.go:[0-9]*\):.*$/\1/' /tmp/qry)
+else
+	cat /tmp/qry
+fi
+
+
+# example
+# /Users/hherman/git/machine-manager/apps/scheduler/pkg/machineops/machineops.go:169:func MarkMachinesForReprovisioning(

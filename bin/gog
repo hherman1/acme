@@ -1,0 +1,8 @@
+#!/bin/bash
+MODDIR=$(dirname $(go env -json | jq -r '.GOMOD'))
+QRY="$@"
+if [ $# -eq 0 ]; then
+    QRY=$(cat) # stdin
+fi
+
+g "$QRY" $MODDIR

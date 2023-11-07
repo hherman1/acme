@@ -1,6 +1,6 @@
 #!/bin/bash
 if [ "$1" = "sync" ]; then
-	cd /Volumes/git/notes;
+	cd $GITHOME/notes;
 	add -A
 	git commit -am fix;
 	git push -u origin HEAD 2>&1
@@ -8,9 +8,9 @@ if [ "$1" = "sync" ]; then
 fi
 if [ $# -eq 0 ]; then
 	echo note sync
-	for p in /Volumes/git/notes/* ; do
+	for p in $GITHOME/notes/* ; do
 		echo $p
 	done
 	exit 0;
 fi
-echo /Volumes/git/notes/$1
+echo $GITHOME/notes/$1

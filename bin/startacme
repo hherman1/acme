@@ -1,5 +1,7 @@
 #!/bin/sh
+export EDITOR=editinacme
 export NAMESPACE=/tmp/ns.hherman.:0/
+export mousescrollsize=3
 mkdir -p $NAMESPACE
 plumber &
 acme -f /mnt/font/'Helvetica'/16a/font -a &

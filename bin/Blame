@@ -1,0 +1,2 @@
+#!/bin/bash
+git blame $(acmectl read $winid tag | awk '{print $1}' ) | awk '{print "@" $0}' | page

@@ -1,0 +1,19 @@
+#!/bin/bash
+set -e
+
+MODDIR=$(dirname $(go env -json | jq -r '.GOMOD'))
+TYP="$@"
+if [ $# -eq 0 ]; then
+    TYP=$(cat) # stdin
+fi
+g "^type $TYP " $MODDIR > /tmp/type
+
+if [ "$(wc -l /tmp/type | awk '{print $1}')" -eq 1 ]; then
+	plumb $(sed 's/:type.*$//' /tmp/type)
+else
+	cat /tmp/type
+fi
+
+
+# example
+# /Users/hherman/git/machine-manager/apps/scheduler/pkg/machineops/machineops.go:169:func MarkMachinesForReprovisioning(
