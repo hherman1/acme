@@ -42,7 +42,7 @@ func main() {
 		Failf("write to page: %v\n", err)
 	}
 	S("acmectl ctl", id, "clean")
-	S("printf 0,0 | acmectl write", id, "addr")
+	SIn("0,0", "acmectl write", id, "addr")
 	S("acmectl ctl", id, "dot=addr")
 	S("acmectl ctl", id, "show")
 }

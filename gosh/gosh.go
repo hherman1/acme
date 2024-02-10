@@ -10,6 +10,10 @@ import (
 var history []string
 
 func S(args ...any) string {
+	return SIn("", args...)
+}
+
+func SIn(in string, args ...any) string {
 	if len(args) == 0 {
 		panic("no args in S")
 	}
@@ -25,6 +29,7 @@ func S(args ...any) string {
 	cmd := exec.Command("bash", "-c", torun.String())
 	cmd.Stdout = &output
 	cmd.Stderr = &output
+	cmd.Stdin = strings.NewReader(in)
 	err := cmd.Run()
 	if err != nil {
 		Failf("%v\nexec: %v\n", output.String(), err)
