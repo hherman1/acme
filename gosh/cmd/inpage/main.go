@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io"
 	"os"
 	"os/exec"
@@ -16,8 +15,6 @@ func main() {
 	}
 	id := strings.TrimSpace(S("acmectl new"))
 	pwd := os.Args[1] + "/"
-	fmt.Println(pwd)
-	fmt.Println("hello")
 	S("acmectl ctl", id, "name", pwd+"+inpage")
 	S("acmectl ctl", id, "nomenu")
 	r, w := io.Pipe()
@@ -27,7 +24,6 @@ func main() {
 		cmd.Stdin = r
 		done <- cmd.Run()
 	}()
-	fmt.Println(os.Args)
 	cmd := exec.Command(os.Args[2], os.Args[3:]...)
 	cmd.Dir = pwd
 	cmd.Stdout = w
@@ -42,7 +38,8 @@ func main() {
 		Failf("write to page: %v\n", err)
 	}
 	S("acmectl ctl", id, "clean")
-	SIn("0,0", "acmectl write", id, "addr")
+	Stdin = "0,0"
+	S("acmectl write", id, "addr")
 	S("acmectl ctl", id, "dot=addr")
 	S("acmectl ctl", id, "show")
 }
