@@ -27,7 +27,7 @@ func S(args ...any) string {
 	cmd.Stderr = &output
 	err := cmd.Run()
 	if err != nil {
-		failf("%v\nexec: %v\n", output.String(), err)
+		Failf("%v\nexec: %v\n", output.String(), err)
 	}
 	return output.String()
 }
@@ -36,7 +36,7 @@ func Cat(path string) string {
 	history = append(history, "cat "+path)
 	bs, err := os.ReadFile(path)
 	if err != nil {
-		failf("read file: %v", err)
+		Failf("read file: %v", err)
 	}
 	return string(bs)
 }
@@ -45,11 +45,11 @@ func WriteFile(path, contents string) {
 	history = append(history, "write file: "+path)
 	err := os.WriteFile(path, []byte(contents), 0777)
 	if err != nil {
-		failf("write file %v: %v", path, err)
+		Failf("write file %v: %v", path, err)
 	}
 }
 
-func failf(format string, args ...any) {
+func Failf(format string, args ...any) {
 	for _, h := range history {
 		fmt.Println("> ", h)
 	}
