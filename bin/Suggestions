@@ -1,10 +1,16 @@
 #!/bin/bash
 # kill `{cat /tmp/suggestions.pid}
+# `ps aux | grep Suggestions | grep bash | awk '{print "kill -9 " $2}'`
+# 9p read acme/acme/$winid/tag
 set -e
 pidlock $$ suggestions
 9p read acme/log | grep --line-buffered '[0-9][0-9]* new' |  while read line
 do
 	NWIN=$(echo $line | awk '{print $1}')
+	TAG=$(9p read "acme/acme/$NWIN/tag")
+	if echo "$TAG" | grep -q '+NoSuggest'; then
+		continue
+	fi
 	# All windows are pinnable
 	printf 'AGit Pin ' | 9p write "acme/acme/$NWIN/tag"
 	if echo "$line" | grep -q '.git/rebase-merge/git-rebase-todo$'; then
@@ -14,7 +20,7 @@ do
 		printf ' |t+ |t-' | 9p write "acme/acme/$NWIN/tag"
 	fi
 	if echo "$line" | grep -q '.go$'; then
-		printf ' |t+ |t- "Watch go test .\" >Def >gog' | 9p write "acme/acme/$NWIN/tag"
+		printf ' |t+ |t- "Watch go test .\" >Def >Refs >Pkg' | 9p write "acme/acme/$NWIN/tag"
 	fi
 done
 #echo 67 new /Volumes/git/project-burro/.git/rebase-merge/git-rebase-todo | awk '{print $1}'

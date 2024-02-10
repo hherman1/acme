@@ -1,8 +1,9 @@
 #!/bin/bash
 MODDIR=$(dirname $(go env -json | jq -r '.GOMOD'))
-QRY="$@"
+
+PKPATH="$@"
 if [ $# -eq 0 ]; then
-    QRY=$(cat) # stdin
+    PKPATH=$(cat) # stdin
 fi
 
-g -i "$QRY" $MODDIR
+fd $(basename $PKPATH) $MODDIR

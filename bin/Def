@@ -7,14 +7,16 @@ if [ $# -eq 0 ]; then
 fi
 
 g "^type $QRY " $MODDIR > /tmp/qry
-g "$QRY" $MODDIR | grep :func | grep -v "Test_*$QRY" >> /tmp/qry # funcs
+g " $QRY\(" $MODDIR | grep :func | grep -v "Test_*$QRY" >> /tmp/qry # funcs
 g '^\s\s*'$QRY'\s\s*=' $MODDIR >> /tmp/qry # consts
+g '^const '$QRY'\s\s*=' $MODDIR >> /tmp/qry # consts
 g '^\t\t*'$QRY'\s\s*' $MODDIR >> /tmp/qry # fields
+sort /tmp/qry | uniq > /tmp/qry.sorted
 
-if [ "$(wc -l /tmp/qry | awk '{print $1}')" -eq 1 ]; then
-	plumb $(sed 's/\(.go:[0-9]*\):.*$/\1/' /tmp/qry)
+if [ "$(wc -l /tmp/qry.sorted | awk '{print $1}')" -eq 1 ]; then
+	plumb $(sed 's/\(.go:[0-9]*\):.*$/\1/' /tmp/qry.sorted)
 else
-	cat /tmp/qry
+	cat /tmp/qry.sorted
 fi
 
 
