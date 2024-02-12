@@ -10,7 +10,12 @@ import (
 
 func main() {
 	root := strings.TrimSpace(S("git rev-parse --show-toplevel"))
-	paths := strings.Split(strings.TrimSpace(S("git diff --name-only")), "\n")
+	FailOnError = false
+	paths := strings.Split(strings.TrimSpace(S("gh pr diff --name-only ")), "\n")
+	FailOnError = true
+	if LastErr != nil {
+		paths = strings.Split(strings.TrimSpace(S("git diff --name-only")), "\n")
+	}
 	for _, p := range paths {
 		if p == "" {
 			continue
