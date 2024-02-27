@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -21,7 +22,16 @@ func main() {
 			continue
 		}
 		path := filepath.Join(root, p)
+		FailOnError = false
 		contents := Cat(path)
+		FailOnError = true
+		if os.IsNotExist(LastErr) {
+			continue
+		}
+		if LastErr != nil {
+			fmt.Printf("cat: %v\n", LastErr)
+			continue
+		}
 		if strings.HasSuffix(contents, "\n") {
 			continue
 		}
