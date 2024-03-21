@@ -29,11 +29,7 @@ func run() error {
 	flag.Parse()
 	chansize := *concurrency
 	semaphore := make(chan struct{}, chansize)
-	type r struct {
-		Out []byte
-		Err error
-	}
-	results := make(chan r)
+	results := make(chan []byte)
 	scanner := bufio.NewScanner(os.Stdin)
 	if len(flag.Args()) == 0 {
 		return fmt.Errorf("no command given")
@@ -51,8 +47,8 @@ func run() error {
 				for i, a := range args {
 					args[i] = strings.ReplaceAll(a, *argname, strings.TrimSpace(line))
 				}
-				out, err := exec.CommandContext(ctx, cmdname, args...).CombinedOutput()
-				results <- r{Out: out, Err: err}
+				out, _ := exec.CommandContext(ctx, cmdname, args...).CombinedOutput()
+				results <- out
 			}(scanner.Text())
 		}
 		for i := 0; i < count; i++ {
@@ -62,10 +58,7 @@ func run() error {
 	}()
 
 	for rr := range results {
-		if rr.Err != nil {
-			return rr.Err
-		}
-		fmt.Print(string(rr.Out))
+		fmt.Println(string(rr))
 	}
 	return nil
 }
