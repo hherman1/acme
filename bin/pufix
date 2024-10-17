@@ -1,0 +1,2 @@
+#!/bin/sh
+commit -am fix && pull && pu

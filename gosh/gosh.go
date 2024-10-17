@@ -38,6 +38,10 @@ func S(args ...any) string {
 		Failf("%v\nexec: %v\n", output.String(), err)
 	}
 	LastErr = err
+
+	kdfjmlasdjflasdkjf
+	lkj
+
 	return output.String()
 }
 
