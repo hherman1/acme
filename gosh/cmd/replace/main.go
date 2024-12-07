@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"os"
@@ -20,7 +21,9 @@ func run() error {
 		return fmt.Errorf("usage: replace [patternfile] [replacementfile] [targetfile]")
 	}
 	pbs, err := os.ReadFile(os.Args[1])
-	if err != nil {
+	if errors.Is(err, os.ErrNotExist) {
+		pbs = []byte(os.Args[1])
+	} else if err != nil {
 		return fmt.Errorf("read pattern file: %v", err)
 	}
 	pattern, err := regexp.Compile(string(pbs))
@@ -28,7 +31,9 @@ func run() error {
 		return fmt.Errorf("compile pattern: %v", err)
 	}
 	rbs, err := os.ReadFile(os.Args[2])
-	if err != nil {
+	if errors.Is(err, os.ErrNotExist) {
+		rbs = []byte(os.Args[2])
+	} else if err != nil {
 		return fmt.Errorf("read replacement file: %v", err)
 	}
 	tbs, err := os.ReadFile(os.Args[3])
