@@ -1,0 +1,5 @@
+#!/bin/bash
+WHO=$1
+START=$2
+END=$3
+GH_HOST=github.rbx.com gh search prs --merged --author=$WHO --sort created --limit 1000 --created="$START..$END" | wc -l

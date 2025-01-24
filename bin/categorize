@@ -1,0 +1,15 @@
+#!/bin/bash
+
+cat > /tmp/cat.in
+
+for var in "$@"
+do
+    echo "### $var"
+    grep "$var" /tmp/cat.in
+    grep -v "$var" /tmp/cat.in > /tmp/cat.in.tmp
+    mv /tmp/cat.in.tmp /tmp/cat.in
+    printf "\n\n----\n"
+done
+
+echo "### Unmatched"
+cat /tmp/cat.in
