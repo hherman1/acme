@@ -1,0 +1,59 @@
+#!/bin/bash
+
+set -e # Removed -x for cleaner output, but feel free to add it back for debugging
+
+# --- 1. Determine the primary branch (main or master) ---
+if git ls-remote --exit-code --heads origin main >/dev/null 2>&1; then
+    PRIMARY_BRANCH="main"
+elif git ls-remote --exit-code --heads origin master >/dev/null 2>&1; then
+    PRIMARY_BRANCH="master"
+else
+    echo "Error: Could not find 'main' or 'master' on origin." >&2
+    exit 1
+fi
+
+echo "Using '$PRIMARY_BRANCH' as primary branch..."
+git fetch origin "$PRIMARY_BRANCH:$PRIMARY_BRANCH"
+
+# --- 2. Validation & Setup ---
+if [ "$#" -ne 1 ]; then
+  echo "Error: No arguments provided." >&2
+  echo "Usage: $0 <branch_name>" >&2
+  exit 1
+fi
+
+BRANCH=$1
+REPO=$(git rev-parse --path-format=absolute --git-common-dir)
+
+if [[ -z "$REPO" ]]; then
+  echo "Error: not in a git repo"
+  exit 1
+fi
+
+DEST="$HOME/git/worktree/$(basename "$REPO")"
+
+# --- 3. Worktree Logic ---
+if [ ! -e "$DEST/$BRANCH" ]; then
+  mkdir -p "$DEST"
+
+  # 1. Check if the branch already exists locally
+  if git show-ref --verify --quiet "refs/heads/$BRANCH"; then
+    echo "Branch '$BRANCH' exists locally, checking out..."
+    env -C "$REPO" git worktree add "$DEST/$BRANCH" "$BRANCH"
+  
+  # 2. Check if the branch exists on origin
+  elif git show-ref --verify --quiet "refs/remotes/origin/$BRANCH" || git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
+    echo "Branch '$BRANCH' exists on origin, fetching and tracking..."
+    env -C "$REPO" git fetch origin "$BRANCH"
+    env -C "$REPO" git worktree add -b "$BRANCH" "$DEST/$BRANCH" "origin/$BRANCH"
+  
+  # 3. Branch doesn't exist anywhere, create a new one based on the discovered PRIMARY_BRANCH
+  else
+    echo "Branch '$BRANCH' does not exist anywhere, creating it from $PRIMARY_BRANCH..."
+    env -C "$REPO" git worktree add -b "$BRANCH" "$DEST/$BRANCH" "$PRIMARY_BRANCH"
+  fi
+else
+  echo "Worktree directory already exists, opening..."
+fi
+
+cursor "$DEST/$BRANCH"

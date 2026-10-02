@@ -8,6 +8,5 @@ acme -f /mnt/font/'Helvetica'/16a/font -a &
 #cd /Volumes/git/acme-go
 #go run ./cmd/acme/ -f /mnt/font/'Helvetica'/16a/font -a &
 sleep 1
-todo
 acmego -f &
 Suggestions &

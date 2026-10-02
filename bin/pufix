@@ -1,2 +1,2 @@
 #!/bin/sh
-commit -am fix && pull && pu
+commit -am fix && git fetch && git merge origin/main && pu

@@ -1,4 +1,3 @@
-// written by chatgpt
 package main
 
 import (
@@ -8,8 +7,10 @@ import (
 	"os"
 	"os/exec"
 	"sort"
+	"strconv"
 	"strings"
 	"sync"
+	"time"
 )
 
 // Contributor holds email and count of lines contributed
@@ -19,7 +20,29 @@ type Contributor struct {
 	Percentage float64
 }
 
+// Time format expected in input argument (YYYY-MM-DD)
+const timeFormat = "2006-01-02"
+
 func main() {
+	// Check for the required argument (date filter)
+	if len(os.Args) < 3 {
+		fmt.Println("Usage: ./author_histogram <YYYY-MM-DD>")
+		os.Exit(1)
+	}
+
+	// Parse the cutoff date
+	startDate, err := time.Parse(timeFormat, os.Args[1])
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: Invalid date format %q. Expected YYYY-MM-DD: %v", os.Args[1], err)
+		os.Exit(1)
+	}
+
+	endDate, err := time.Parse(timeFormat, os.Args[2])
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: Invalid date format %q. Expected YYYY-MM-DD: %v", os.Args[1], err)
+		os.Exit(1)
+	}
+
 	// Read file names from stdin
 	files := readInputFiles()
 
@@ -29,10 +52,10 @@ func main() {
 	}
 
 	// Process files concurrently
-	contributions := processFilesConcurrently(files)
+	contributions := processFilesConcurrently(files, startDate, endDate)
 
 	if len(contributions) == 0 {
-		fmt.Println("No authors found. (Either no files processed or no valid git blame data.)")
+		fmt.Println("No authors found (either no files processed or no valid git blame data).")
 		return
 	}
 
@@ -73,8 +96,8 @@ func readInputFiles() []string {
 	return files
 }
 
-// processFilesConcurrently runs git blame concurrently on multiple files
-func processFilesConcurrently(files []string) map[string]int {
+// processFilesConcurrently runs git blame concurrently on multiple files with a date filter
+func processFilesConcurrently(files []string, startDate time.Time, endDate time.Time) map[string]int {
 	var wg sync.WaitGroup
 	contributions := make(map[string]int)
 	mu := sync.Mutex{}
@@ -85,7 +108,7 @@ func processFilesConcurrently(files []string) map[string]int {
 		wg.Add(1)
 		go func(file string) {
 			defer wg.Done()
-			if stats := processFile(file); len(stats) > 0 {
+			if stats := processFile(file, startDate, endDate); len(stats) > 0 {
 				ch <- stats
 			}
 		}(file)
@@ -109,8 +132,8 @@ func processFilesConcurrently(files []string) map[string]int {
 	return contributions
 }
 
-// processFile runs 'git blame' on a single file and counts line contributions per author email
-func processFile(file string) map[string]int {
+// processFile runs 'git blame' on a single file and filters by date
+func processFile(file string, startDate time.Time, endDate time.Time) map[string]int {
 	cmd := exec.Command("git", "blame", "--line-porcelain", file)
 	output, err := cmd.Output()
 	if err != nil {
@@ -118,21 +141,39 @@ func processFile(file string) map[string]int {
 		return nil
 	}
 
-	// Parse the output
-	return parseGitBlameOutput(output)
+	// Parse the output and filter by date
+	return parseGitBlameOutput(output, startDate, endDate)
 }
 
-// parseGitBlameOutput extracts author emails and counts occurrences
-func parseGitBlameOutput(output []byte) map[string]int {
+// parseGitBlameOutput extracts author emails and counts occurrences, filtering by date
+func parseGitBlameOutput(output []byte, startDate time.Time, endDate time.Time) map[string]int {
 	contributions := make(map[string]int)
 	scanner := bufio.NewScanner(bytes.NewReader(output))
 
+	var currentEmail string
+	var currentTimestamp int64
+
 	for scanner.Scan() {
 		line := scanner.Text()
+
 		if strings.HasPrefix(line, "author-mail <") {
-			email := strings.TrimPrefix(line, "author-mail <")
-			email = strings.TrimSuffix(email, ">")
-			contributions[email]++
+			currentEmail = strings.TrimPrefix(line, "author-mail <")
+			currentEmail = strings.TrimSuffix(currentEmail, ">")
+		} else if strings.HasPrefix(line, "author-time ") {
+			timestampStr := strings.TrimPrefix(line, "author-time ")
+			timestamp, err := strconv.ParseInt(timestampStr, 10, 64)
+			if err == nil {
+				currentTimestamp = timestamp
+			}
+			// Process a new blame entry (this always comes after mail)
+			if currentEmail != "" && currentTimestamp != 0 {
+				commitDate := time.Unix(currentTimestamp, 0)
+				geStart := commitDate.After(startDate) || commitDate.Equal(startDate)
+				leEnd := commitDate.Before(endDate) || commitDate.Equal(endDate)
+				if geStart && leEnd {
+					contributions[currentEmail]++
+				}
+			}
 		}
 	}
 

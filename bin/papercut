@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Check for exactly two arguments
+if [ "$#" -lt 2 ]; then
+  echo "Usage: papercut <short-hyphenated-name> \"<longer description of the issue>\"" >&2
+  exit 1
+fi
+
+# Ensure git is installed and we are inside a working tree
+if ! GIT_ROOT=$(git rev-parse --show-toplevel 2>/dev/null); then
+  echo "Error: Not inside a git repository." >&2
+  exit 1
+fi
+
+# Strip trailing .md if the user accidentally included it
+SLUG="${1%.md}"
+DESCRIPTION="$2"
+
+# Ensure directory exists at git repo root
+PAPERCUTS_DIR="${GIT_ROOT}/papercuts"
+mkdir -p "${PAPERCUTS_DIR}"
+
+FILE_PATH="${PAPERCUTS_DIR}/${SLUG}.md"
+
+# Append or create papercut file with ISO timestamp header
+{
+  echo "# ${SLUG}"
+  echo "*Logged: $(date -u +'%Y-%m-%d %H:%M:%S UTC')*"
+  echo ""
+  echo "${DESCRIPTION}"
+} > "${FILE_PATH}"
+
+echo "Papercut logged to ${FILE_PATH}"

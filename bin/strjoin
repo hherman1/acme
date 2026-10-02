@@ -1,0 +1,2 @@
+#!/bin/sh
+awk -v d="$1" 'NR>1{printf "%s", d} {printf "%s", $0} END{print ""}'

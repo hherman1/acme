@@ -1,0 +1,5 @@
+#!/bin/sh
+export CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1
+export ANTHROPIC_BASE_URL="https://snc2-apis.sitetest2.simulpong.com/llm-gateway"
+export ANTHROPIC_AUTH_TOKEN="$(sapi lca-token -a rbx.st2.llm-gateway | tail -n1)"
+command claude "$@"

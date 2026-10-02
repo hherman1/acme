@@ -9,6 +9,7 @@ import (
 	"os/exec"
 	"os/signal"
 	"time"
+	"strings"
 )
 
 var duration = flag.Duration("d", 10*time.Second, "timeout for each command [default 10s]")
@@ -45,10 +46,10 @@ func run() error {
 	go func() {
 		<-ctx.Done()
 		cmd.Process.Kill()
-	}
+	}()
 	err := cmd.Run()
 	if ctx.Err() != nil {
-		return fmt.Errorf("timeout: %w", ctx.Err())
+		return fmt.Errorf("timeout %q: %w", strings.Join(flag.Args(), " "), ctx.Err())
 	}
 	return err
 }

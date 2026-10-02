@@ -1,2 +1,2 @@
 #!/bin/sh
-thetool machine ssh "$@"
+fm admin ssh "$@"

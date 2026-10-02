@@ -1,0 +1,3 @@
+#!/bin/bash
+C=/Applications/declawd.app/Contents/Helpers/Cursor.app
+ELECTRON_RUN_AS_NODE=1 "$C/Contents/MacOS/Cursor" "$C/Contents/Resources/app/out/cli.js" "$@"

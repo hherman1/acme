@@ -1,0 +1,70 @@
+#!/bin/bash
+
+set -e
+
+# --- 1. Validation ---
+if [ "$#" -ne 1 ]; then
+    echo "Error: No arguments provided." >&2
+    echo "Usage: $0 <pr_url>" >&2
+    exit 1
+fi
+
+PR_URL=$1
+REPO_URL=$(echo $1 | sed 's:/pull/.*::g')
+ORG=$(echo $1 | awk -F/ '{print $4}')
+REPO=$(echo $1 | awk -F/ '{print $5}')
+TYPE=$(echo $1 | awk -F/ '{print $6}')
+PR=$(echo $1 | awk -F/ '{print $7}')
+
+if [[ "$TYPE" != "pull" ]]; then
+    echo "Error: String '$TYPE' does not match expected value 'pull'." >&2
+    exit 1
+fi
+
+# --- 2. Query PR Metadata (Target & Head Branches) ---
+TARGET_BRANCH=$(gh pr view $PR_URL --json baseRefName --jq '.baseRefName')
+BRANCH=$(gh pr view $PR_URL --json headRefName --jq '.headRefName')
+
+# --- 3. Clone / Prepare Bare Repo ---
+cd /Users/hherman/git/review/bare/
+if [[ ! -e "$ORG/" ]]; then
+    mkdir -p "$ORG"
+fi
+cd "$ORG"
+if [[ ! -e "$REPO.git" ]]; then
+    echo "Cloning $REPO_URL..."
+    git clone --bare "$REPO_URL"
+fi
+cd "$REPO.git"
+
+# Fetch latest target branch and PR branch from origin
+echo "Fetching latest '$TARGET_BRANCH' and '$BRANCH'..."
+git fetch origin "+refs/heads/$TARGET_BRANCH:refs/heads/$TARGET_BRANCH"
+git fetch origin "$BRANCH"
+
+# Capture commit SHA immediately while inside bare repo root
+HEAD_SHA=$(git rev-parse FETCH_HEAD)
+
+DEST="$HOME/git/review/reviews/$ORG/$REPO"
+
+# --- 4. Worktree Setup & Fast-Forward / Hard Reset ---
+if [ ! -d "$DEST/$PR/$BRANCH" ]; then
+    mkdir -p "$DEST/$PR"
+    git worktree add -B "$PR/$BRANCH" "$DEST/$PR/$BRANCH" "$HEAD_SHA"
+fi
+
+cd "$DEST/$PR/$BRANCH"
+
+# Reset worktree head directly to the commit SHA (resilient to force pushes)
+git reset --hard "$HEAD_SHA"
+
+# --- 5. Generate Diff & Plumb ---
+git diff "$TARGET_BRANCH...HEAD" > "$PR.review"
+gh pr view "$PR" > "$PR.pr"
+
+if [ -z "${NAMESPACE}" ]; then
+    export NAMESPACE="/tmp/ns.hherman.:0/"
+fi
+
+plumb "$PR.pr"
+plumb "$PR.review"

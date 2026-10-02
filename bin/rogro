@@ -1,23 +1,46 @@
 #!/bin/bash
 
-START='2024-07-01'
-END='2024-12-31'
+START='2026-01-01'
+END='2026-06-01'
 
-if [ ! -f "/tmp/prs.all" ]; then
-	GH_HOST=github.rbx.com gh search prs --merged --author=@me --sort created --limit 700 --json createdAt,title,url,repository > /tmp/prs.all
-	GH_HOST=github.com gh search prs --merged --author=@me --sort created --limit 700 --json createdAt,title,url,repository >> /tmp/prs.all
-fi
+function loadgh () {
+	if [ ! -f "$1.all" ]; then
+		GH_HOST=github.rbx.com gh search prs --created=$START..$END --sort created --limit 1000 --json createdAt,title,url,repository ${@:2} > $1.all
+		GH_HOST=github.com gh search prs --sort created --limit 1000 --created=$START..$END  --json createdAt,title,url,repository ${@:2} >> $1.all
+	fi
+	cat $1.all | jq -s 'add' > $1
+}
 
-cat /tmp/prs.all | jq -s 'add' > /tmp/prs
-cat /tmp/prs | jq -r --arg s $START --arg e $END 'map(select(.createdAt | . >= $s and . <= $e)) | sort_by(.createdAt) | reverse | map("* [\(.repository.nameWithOwner) \(.title)](\(.url))") | .[]'
+function mdprs() {
+	cat $1 | jq -r 'sort_by(.createdAt) | reverse | map("* [\(.repository.nameWithOwner) \(.title)](\(.url))") | .[]'
+}
+
+loadgh /tmp/prs --merged --author=jtrokel
+# loadgh /tmp/prs --merged --author=@me
+mdprs /tmp/prs
+
+
+
+# Code reviews
+loadgh /tmp/reviews --reviewed-by=@me -- -author:@me
+printf '\n\nREVIEWS\n\n'
+mdprs /tmp/reviews
 
 
 COMPARE=(hherman smistrata garywang jsheffield kwong kfan bwu jtian wbousset nazaria)
+
+# Compare PR counts
+printf '\n\nPR Counts\n\n'
 for p in "${COMPARE[@]}"
 do
-	if [ ! -f "/tmp/prs.$p.all" ]; then
-		echo downloading $p
-		GH_HOST=github.rbx.com gh search prs --merged --author=$p --sort created --limit 700 --json createdAt,title,url,repository > /tmp/prs.$p.all
-	fi
-	echo $p $(cat /tmp/prs.$p.all | jq --arg s $START --arg e $END 'map(select(.createdAt | . >= $s and . <= $e)) | length')
+	loadgh /tmp/prs.$p --merged --author=$p
+	echo $p $(cat /tmp/prs.$p | jq 'length') "(-policies:" $(cat /tmp/prs.$p | jq '[.[] | select(.repository.name != "fleet-manager-policies" and .repository.name != "machine-manager-policies")] | length') ")"
+done
+
+# Compare review counts
+printf '\n\nReview Counts\n\n'
+for p in "${COMPARE[@]}"
+do
+	loadgh /tmp/reviews.$p --reviewed-by=$p -- -author:$p
+	echo $p $(cat /tmp/reviews.$p | jq 'length') "(-policies:" $(cat /tmp/reviews.$p | jq '[.[] | select(.repository.name != "fleet-manager-policies" and .repository.name != "machine-manager-policies")] | length') ")"
 done
